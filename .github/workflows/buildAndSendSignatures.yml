@@ -68,6 +68,10 @@ env:
   UDL_EMAIL: ${{ secrets.UDL_EMAIL }}
   UDL_POSITION: ${{ secrets.UDL_POSITION }}
   UDL_LINKEDIN: ${{ secrets.UDL_LINKEDIN }}
+  DELEGATIONUAB_NAME: ${{ secrets.DELEGATIONUAB_NAME }}
+  DELEGATIONUAB_EMAIL: ${{ secrets.DELEGATIONUAB_EMAIL }}
+  DELEGATIONUAB_POSITION: ${{ secrets.DELEGATIONUAB_POSITION }}
+  DELEGATIONUAB_LINKEDIN: ${{ secrets.DELEGATIONUAB_LINKEDIN }}
 jobs:
   build_and_send_signatures:
     runs-on: ubuntu-latest
