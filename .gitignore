@@ -161,9 +161,5 @@ cython_debug/
 !.idea/dictionaries
 
 node_modules
-out
-!out/.gitignore
-secrets
-!secrets/.gitkeep
 .env
 .idea
