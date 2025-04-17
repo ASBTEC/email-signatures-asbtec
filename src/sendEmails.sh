@@ -2,18 +2,16 @@
 
 PROJECT_FOLDER="$(cd "$(dirname "$(realpath "$0")")/../" &>/dev/null && pwd)"
 
-for signature in $@; do
-  pointer="$(echo "${signature}" | tr '[:lower:]' '[:upper:]')_EMAIL"
-  email_value="${!pointer}"
+email_value="$(cat "${PROJECT_FOLDER}/data/user.json" | jq -r '.email')"
 
-  curl -v --url 'smtps://smtp.gmail.com:465' \
-    --ssl-reqd \
-    --mail-from "${EMAIL_USERNAME}" \
-    --mail-rcpt "${email_value}" \
-    --mail-rcpt "${EMAIL_USERNAME}" \
-    --user "${EMAIL_USERNAME}:${EMAIL_PASSWORD}" \
-    -F '=(;type=multipart/mixed' \
-    -F "=Hola!
+curl -v --url 'smtps://smtp.gmail.com:465' \
+  --ssl-reqd \
+  --mail-from "${EMAIL_USERNAME}" \
+  --mail-rcpt "${email_value}" \
+  --mail-rcpt "${EMAIL_USERNAME}" \
+  --user "${EMAIL_USERNAME}:${EMAIL_PASSWORD}" \
+  -F '=(;type=multipart/mixed' \
+  -F "=Hola!
 
 Estàs rebent aquest correu perquè una nova signatura per a l'email d'ASBTEC ${email_value} ha estat generada. Descarrega el fitxer adjunt d'aquest correu i actualitza la teva signatura al teu client de correu electrònic.
 
@@ -27,9 +25,8 @@ Fins aviat!
 
 A
 ;type=text/plain" \
-    -F "file=@${PROJECT_FOLDER}/out/${signature}.html;type=text/html;encoder=base64" \
-    -F '=)' \
-    -H "Subject: Actualització de signatures d'email" \
-    -H "From: Informàtica ASBTEC <informatica@asbtec.cat>" \
-    -H "To: ${EMAIL_USERNAME} <${EMAIL_USERNAME}>"
-done
+  -F "file=@${PROJECT_FOLDER}/out/${email_value}.html;type=text/html;encoder=base64" \
+  -F '=)' \
+  -H "Subject: Actualització de signatures d'email" \
+  -H "From: Informàtica ASBTEC <informatica@asbtec.cat>" \
+  -H "To: ${EMAIL_USERNAME} <${EMAIL_USERNAME}>"

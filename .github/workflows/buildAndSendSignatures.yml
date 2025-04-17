@@ -1,140 +1,52 @@
 name: buildAndSendSignatures
 
 on:
-  push:
-    branches:
-      - 'master'
-    paths:
-      - 'data/**.json'
-      - 'templates/template.html'
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Full name'
+        required: true
+      email:
+        description: 'Email address'
+        required: true
+      position:
+        description: 'Job title'
+        required: true
+      linkedin:
+        description: 'LinkedIn URL'
+        required: false
 
 env:
   GH_ACTIONS_ENV: true
   EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
   EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-  VICEPRESIDENT_LINKEDIN: ${{ secrets.VICEPRESIDENT_LINKEDIN }}
-  VICEPRESIDENT_POSITION: ${{ secrets.VICEPRESIDENT_POSITION }}
-  VICEPRESIDENT_EMAIL: ${{ secrets.VICEPRESIDENT_EMAIL }}
-  VICEPRESIDENT_NAME: ${{ secrets.VICEPRESIDENT_NAME }}
-  COMMUNICATION_POSITION: ${{ secrets.COMMUNICATION_POSITION }}
-  COMMUNICATION_LINKEDIN: ${{ secrets.COMMUNICATION_LINKEDIN }}
-  COMMUNICATION_EMAIL: ${{ secrets.COMMUNICATION_EMAIL }}
-  COMMUNICATION_NAME: ${{ secrets.COMMUNICATION_NAME }}
-  TREASURER_POSITION: ${{ secrets.TREASURER_POSITION }}
-  TREASURER_LINKEDIN: ${{ secrets.TREASURER_LINKEDIN }}
-  TREASURER_EMAIL: ${{ secrets.TREASURER_EMAIL }}
-  TREASURER_NAME: ${{ secrets.TREASURER_NAME }}
-  SECRETARY_LINKEDIN: ${{ secrets.SECRETARY_LINKEDIN }}
-  SECRETARY_POSITION: ${{ secrets.SECRETARY_POSITION }}
-  SECRETARY_EMAIL: ${{ secrets.SECRETARY_EMAIL }}
-  SECRETARY_NAME: ${{ secrets.SECRETARY_NAME }}
-  PRESIDENT_LINKEDIN: ${{ secrets.PRESIDENT_LINKEDIN }}
-  PRESIDENT_POSITION: ${{ secrets.PRESIDENT_POSITION }}
-  PRESIDENT_EMAIL: ${{ secrets.PRESIDENT_EMAIL }}
-  PRESIDENT_NAME: ${{ secrets.PRESIDENT_NAME }}
-  ALEIXMT_LINKEDIN: ${{ secrets.ALEIXMT_LINKEDIN }}
-  ALEIXMT_POSITION: ${{ secrets.ALEIXMT_POSITION }}
-  ALEIXMT_EMAIL: ${{ secrets.ALEIXMT_EMAIL }}
-  ALEIXMT_NAME: ${{ secrets.ALEIXMT_NAME }}
-  INFORMATICS_LINKEDIN: ${{ secrets.INFORMATICS_LINKEDIN }}
-  INFORMATICS_POSITION: ${{ secrets.INFORMATICS_POSITION }}
-  INFORMATICS_EMAIL: ${{ secrets.INFORMATICS_EMAIL }}
-  INFORMATICS_NAME: ${{ secrets.INFORMATICS_NAME }}
-  ACTIVITIES_NAME: ${{ secrets.ACTIVITIES_NAME }}
-  ACTIVITIES_EMAIL: ${{ secrets.ACTIVITIES_EMAIL }}
-  ACTIVITIES_POSITION: ${{ secrets.ACTIVITIES_POSITION }}
-  ACTIVITIES_LINKEDIN: ${{ secrets.ACTIVITIES_LINKEDIN }}
-  ADVISER_NAME: ${{ secrets.ADVISER_NAME }}
-  ADVISER_EMAIL: ${{ secrets.ADVISER_EMAIL }}
-  ADVISER_POSITION: ${{ secrets.ADVISER_POSITION }}
-  ADVISER_LINKEDIN: ${{ secrets.ADVISER_LINKEDIN }}
-  UNIVERSITIES_NAME: ${{ secrets.UNIVERSITIES_NAME }}
-  UNIVERSITIES_EMAIL: ${{ secrets.UNIVERSITIES_EMAIL }}
-  UNIVERSITIES_POSITION: ${{ secrets.UNIVERSITIES_POSITION }}
-  UNIVERSITIES_LINKEDIN: ${{ secrets.UNIVERSITIES_LINKEDIN }}
-  JORNADES_NAME: ${{ secrets.JORNADES_NAME }}
-  JORNADES_EMAIL: ${{ secrets.JORNADES_EMAIL }}
-  JORNADES_POSITION: ${{ secrets.JORNADES_POSITION }}
-  JORNADES_LINKEDIN: ${{ secrets.JORNADES_LINKEDIN }}
-  DELEGATIONS_NAME: ${{ secrets.DELEGATIONS_NAME }}
-  DELEGATIONS_EMAIL: ${{ secrets.DELEGATIONS_EMAIL }}
-  DELEGATIONS_POSITION: ${{ secrets.DELEGATIONS_POSITION }}
-  DELEGATIONS_LINKEDIN: ${{ secrets.DELEGATIONS_LINKEDIN }}
-  ENTERPRISE_NAME: ${{ secrets.ENTERPRISE_NAME }}
-  ENTERPRISE_EMAIL: ${{ secrets.ENTERPRISE_EMAIL }}
-  ENTERPRISE_POSITION: ${{ secrets.ENTERPRISE_POSITION }}
-  ENTERPRISE_LINKEDIN: ${{ secrets.ENTERPRISE_LINKEDIN }}
-  UDL_NAME: ${{ secrets.UDL_NAME }}
-  UDL_EMAIL: ${{ secrets.UDL_EMAIL }}
-  UDL_POSITION: ${{ secrets.UDL_POSITION }}
-  UDL_LINKEDIN: ${{ secrets.UDL_LINKEDIN }}
-  DELEGATIONUAB_NAME: ${{ secrets.DELEGATIONUAB_NAME }}
-  DELEGATIONUAB_EMAIL: ${{ secrets.DELEGATIONUAB_EMAIL }}
-  DELEGATIONUAB_POSITION: ${{ secrets.DELEGATIONUAB_POSITION }}
-  DELEGATIONUAB_LINKEDIN: ${{ secrets.DELEGATIONUAB_LINKEDIN }}
 jobs:
   build_and_send_signatures:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
-        # https://stackoverflow.com/questions/74265821/get-modified-files-in-github-actions
-      - name: Get changed files
-        id: changed-files
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create user data JSON with data received from Google Apps Script
         run: |
-          # Get modified files as input
-          input_text=""
-          if ${{ github.event_name == 'pull_request' }}; then
-              input_text="$(git diff --name-only -r HEAD^1 HEAD | xargs)" 
-          else
-              input_text="$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" 
-          fi
-          # Detect if the template has been modified 
-          template_modified=false
-          for file in ${input_text}; do
-            if [ "templates/template.html" = "${file}" ]; then
-              template_modified=true
-            fi 
-          done
-          # Select the signatures that are going to be built
-          signatures_to_build=""
-          if [ "${template_modified}" = "false" ]; then   
-            for file in ${input_text}; do
-          echo value  $file
-              if echo "${file}" | grep -q "/"; then
-                if [ "$(echo "${file}" | cut -f1 -d "/")" = "data" ]; then
-                  if echo "${file}" | grep -q "."; then 
-                    signatures_to_build="$(echo "${file}" | cut -d "/" -f2 | cut -d "." -f1) ${signatures_to_build}"
-                  fi
-                fi
-              fi 
-            done
-          else   # template_modified = true
-            for file in data/*.json; do
-              signatures_to_build="$(echo "${file}" | cut -d "/" -f2 | cut -d "." -f1) ${signatures_to_build}"
-            done
-          fi
-          echo "signatures_to_build=${signatures_to_build}" 
-          echo "signatures_to_build=${signatures_to_build}" >> $GITHUB_OUTPUT
-      - name: List changed files
-        run: |
-          echo "Signatures to build:"
-          for file in ${{ steps.changed-files.outputs.signatures_to_build }}; do
-              echo "$file"
-          done
-      - name: Substitute marks (implicit parameters in env)
-        run: |
-          chmod u+x src/substituteMarks.sh 
-          ./src/substituteMarks.sh ${{ steps.changed-files.outputs.signatures_to_build }}
-      - name: Set up nodeJS
+          mkdir -p data
+          echo '{
+          "name": "${{ github.event.inputs.name }}",
+          "email": "${{ github.event.inputs.email }}",
+          "position": "${{ github.event.inputs.position }}",
+          "linkedin": "${{ github.event.inputs.linkedin }}"
+          }' > data/user.json
+
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
+
       - name: Render signatures
         run: |
           npm install
           node ./src/renderSignatures.js
+
       - name: Send emails
         id: send-emails
         run: |

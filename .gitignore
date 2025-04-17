@@ -162,7 +162,7 @@ cython_debug/
 
 node_modules
 out
-!out/.gitkeep
+!out/.gitignore
 secrets
 !secrets/.gitkeep
 .env

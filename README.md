@@ -1,5 +1,7 @@
 # email-signatures
 Contains the necessary data and code to generate the email signature of the email accounts in ASBTEC.
+This documentation is mostly deprecated since we changed the method of creating the signatures: We went from triggering 
+on commit in GitHub to trigger a workflow dispatch from Google App Scripts.
 
 ## Components
 ###### Bulk update of secrets
