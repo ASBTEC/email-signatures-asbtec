@@ -17,7 +17,7 @@ Estàs rebent aquest correu perquè una nova signatura per a l'email d'ASBTEC ${
 
 Si has rebut més d'un correu d'aquest tipus fes servir el contingut de l'últim mail per a actualitzar la firma, doncs serà la versió més actualitzada. Pots borrar la resta.
 
-En aquest vídeo podràs trobar instruccions sobre com instalar la firma al teu compte de correu d'ASBTEC: https://youtu.be/v4Mi0DMAwQU . Recorda que només podràs veure el vídeo si estàs loguejat a YouTube amb el teu compte d'ASBTEC.
+En aquest vídeo podràs trobar instruccions sobre com instalar la firma al teu compte de correu d'ASBTEC: https://drive.google.com/file/d/1BM0HlwtVvdXZP9xUz7UrHKMz4nRKLxjZ/view?usp=sharing . Recorda que només podràs veure el vídeo si estàs loguejat a YouTube amb el teu compte d'ASBTEC.
 
 Aquest missatge ha estat auto-generat. Per qualsevol problema contacta amb informatica@asbtec.cat.
 
