@@ -28,14 +28,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create user data JSON with data received from Google Apps Script
+        env:
+          INPUT_NAME: ${{ github.event.inputs.name }}
+          INPUT_EMAIL: ${{ github.event.inputs.email }}
+          INPUT_POSITION: ${{ github.event.inputs.position }}
+          INPUT_LINKEDIN: ${{ github.event.inputs.linkedin }}
         run: |
           mkdir -p data
-          echo '{
-          "name": "${{ github.event.inputs.name }}",
-          "email": "${{ github.event.inputs.email }}",
-          "position": "${{ github.event.inputs.position }}",
-          "linkedin": "${{ github.event.inputs.linkedin }}"
-          }' > data/user.json
+          jq -n \
+            --arg name "$INPUT_NAME" \
+            --arg email "$INPUT_EMAIL" \
+            --arg position "$INPUT_POSITION" \
+            --arg linkedin "$INPUT_LINKEDIN" \
+            '{name: $name, email: $email, position: $position, linkedin: $linkedin}' > data/user.json
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
